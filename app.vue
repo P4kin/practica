@@ -1,16 +1,38 @@
 <script setup lang="tsx">
-import { Image } from "lucide-vue-next";
-import { ref } from "vue";
+import Modal from './components/MyForm.vue'
+import { ref, onMounted, onUnmounted, createApp } from "vue";
+import { shallowRef } from 'vue';
+import type { LngLat, YMap } from '@yandex/ymaps3-types';
+import {
+    YandexMap,
+    YandexMapControls,
+    YandexMapDefaultFeaturesLayer,
+    YandexMapDefaultMarker,
+    YandexMapDefaultSchemeLayer,
+    YandexMapMarker,
+    YandexMapZoomControl,
+} from 'vue-yandex-maps';
 
+const map = shallowRef<null | YMap>(null);
+
+const openMarker = ref<null | number>(null);
+
+const markers: { coordinates: LngLat }[] = [
+    {
+        coordinates: [92.835854, 56.025819],
+    }
+];
+
+
+const showModal = ref(false)
 function scrollTo(id:string) {
       const element = document.getElementById(id);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
       }
     }
-  
-
 const defaultValue = "item-1";
+
 
 const accordionItems = [
   {
@@ -71,7 +93,6 @@ const accordionItems = [
   },
 ];
 
-
 </script>
 
 <template>
@@ -118,9 +139,11 @@ const accordionItems = [
       <button
         style="border-radius: 10px; border-color: #1e3c72 !important"
         class="bg-muted-foreground hover:bg-accent w-64 h-16"
+        @click="showModal = true"
       >
         Зарегистрировать чек
       </button>
+      <Modal v-model="showModal"></Modal>
     </div>
   </div>
   <div id="rules">
@@ -133,7 +156,7 @@ const accordionItems = [
     <div style="position: relative">
       <img
         src="/images/Розыгрыш квадрика_для сайта_Шурик 270 х 270 px.png"
-        class="scale-75"
+        class="scale-75 hover:animate-spin"
       />
       <h5 class="text-accent" style="font-size: larger; font-weight: bolder">
         Покупайте
@@ -155,6 +178,7 @@ const accordionItems = [
       <button
         style="border-radius: 10px; border-color: #1e3c72 !important"
         class="text-accent-foreground bg-muted-foreground hover:bg-accent w-45 h-16 my-4"
+        @click="showModal = true"
       >
         Зарегистрировать чек
       </button>
@@ -162,7 +186,7 @@ const accordionItems = [
     <div style="position: relative">
       <img
         src="/images/Розыгрыш квадрика_для сайта_Подарок 270 х 270 px.png"
-        class="scale-75"
+        class="scale-75 animate-pulse"
       />
       <h5 class="text-accent" style="font-size: larger; font-weight: bolder">
         Выигрывайте
@@ -221,7 +245,7 @@ const accordionItems = [
       техмаркетах Вираж. Номиналы:
     </h2>
     <img
-      class=" animate-bounce  scale-65"
+      class=" animate-bounce  scale-50"
       src="/images/Розыгрыш квадрика_для сайта_Подарочные карты 900 х 410 px.png"
     />
   </div>
@@ -262,12 +286,102 @@ const accordionItems = [
   </div>
   </div>
 
+  <div id="map">
+    <h2 class="text-accent text-6xl font-bold text-center py-4">
+      Где и когда?
+    </h2>
+    <div class="grid grid-cols-2 gap-10 justify-items-center bg-accent py-10 px-20 text-background">
+      <div style="position: relative; overflow: hidden;">
+      <yandex-map
+      v-model="map"
+      :settings="{
+        location: {
+          center: [92.835854, 56.025819],
+          zoom: 16,
+        },
+      }"
+      width="600px"
+      height="500px"
+  >
+    <yandex-map-default-scheme-layer/>
+    <yandex-map-default-features-layer/>
+    <yandex-map-marker class="bg-background"
+        v-for="marker, index in markers"
+        marker-type="custom"
+        :key="index"
+        position="top-center left-center"
+        :settings="{ coordinates: marker.coordinates, onClick: () => openMarker = index, zIndex: openMarker === index ? 1 : 0 }">
+        <img src="./images/logo-icon.svg"
+            alt=""
+            class="pin"
+        >
+        <div class="marker">
+          <div v-if="openMarker === index" class="popup" >
+            <a href="https://yandex.ru/maps/org/virazh/1082344735/?from=mapframe&ll=92.835486%2C56.026196&z=17" target="_blank" class="font-bold text-accent">Вираж</a>
+            <button class="absolute top-2 right-2" @click.stop="openMarker = null">
+              <img width="12" height="12" src="/images/close.svg" alt="">
+            </button>
+            <p class="text-xs" style="color: gray;">Строительный гипермаркет, электро- и бензоинструмент, сварочное оборудование и материалы</p>
+            <div class="flex justify-between my-4">
+              <a href="https://yandex.ru/maps/org/virazh/1082344735/reviews/?add-review=true&from=mapframe&ll=92.835486%2C56.026196&z=17" target="_blank">
+                <div class="flex flex-wrap" >
+                  <img width="15" height="15" src="/images/star.png">
+                  <img width="15" height="15" src="/images/star.png">
+                  <img width="15" height="15" src="/images/star.png">
+                  <img width="15" height="15" src="/images/star.png">
+                  <img width="15" height="15" src="/images/star.png">
+                </div>
+                <p>5.0</p>
+              </a>
+              <p>Открыто с 8:00 до 20:00</p>
+            </div>
+            <div class="flex flex-wrap" >
+            <img width="14" height="14" src="/images/geo.svg">
+            <p class="mx-2">Красноярск, Северо-Енисейская улица, 40</p>
+            </div>
+            <div class="flex flex-wrap" >
+            <img width="14" height="14" src="/images/phone.svg">
+            <p class="mx-2">+7 (391) 290-20-01</p>
+            </div>
+            <div class="flex flex-wrap" >
+            <img width="14" height="14" src="/images/web.svg">
+            <a class="mx-2 font-semibold text-accent" href="www.virage24.ru">virage24.ru</a>
+            </div>
+            <div class="flex flex-row justify-center gap-4 py-4">
+              <a
+              href="https://yandex.ru/maps/?ll=92.835278%2C56.026129&amp;rtd=0&amp;rtext=~56.026129%2C92.835278&amp;rtt=auto&amp;ruri=~&amp;start_navigation=true&amp;z=14&amp;from=mapframe"
+              target="_blank"
+              class="bg-secondary hover:bg-secondary-foreground text-accent font-bold py-2 px-4 rounded">
+              Как добраться
+              </a>
+              <a
+              href="https://yandex.ru/maps/org/virazh/1082344735/?from=mapframe&ll=92.835486%2C56.026196&z=17"
+              target="_blank"
+              class="bg-secondary hover:bg-secondary-foreground text-accent font-bold py-2 px-4 rounded">
+              Об организации
+              </a>
+            </div>
+          </div>
+        </div>
+    </yandex-map-marker>
+  </yandex-map>
+      </div>
+      <div class="flex-col justify-center py-15 px-20">
+        <span class=" text-xl">Розыгрыш пройдет в формате мероприятия, на котором вас ждут конкурсы, подарки, а также тест-драйв инструментов и техники</span>
+        <h2 class="text-2xl my-7">Где?</h2>
+        <span class=" text-xl py-5">На Ул. Северо-Енисейская, 40 на парковке возле фитнес-центра Гараж</span>
+        <h2 class="text-2xl my-7">Когда?</h2>
+        <span class=" text-xl py-5">Мероприятие пройдет 28 сентября. Начало программы в 11:00, розыгрыш в 12:00</span>
+      </div>
+    </div>
+  </div>
+
   <h2 id="about" class="text-accent text-3xl font-bold text-center py-4">
     Вопросы и ответы
   </h2>
   <Accordion
     id="about"
-    class="text-accent mx-16"
+    class="text-accent mx-45"
     type="single"
     collapsible
     :default-value="defaultValue"
@@ -277,12 +391,35 @@ const accordionItems = [
       :key="item.value"
       :value="item.value"
     >
-      <AccordionTrigger style="font-weight: 600">{{
+      <AccordionTrigger class=" font-bold text-2xl">{{
         item.title
       }}</AccordionTrigger>
-      <AccordionContent>
+      <AccordionContent class=" font-semibold text-xl">
         <component :is="item.content" />
       </AccordionContent>
     </AccordionItem>
   </Accordion>
 </template>
+
+<style scoped>
+.pin {
+  background: rgb(236, 143, 0);
+  filter: invert(100%);
+  max-width: unset;
+  scale: 60%;
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+}
+
+.popup {
+  width: 398px;
+  height: 301px;
+  position: absolute;
+  top: calc(100% + 10px);
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px;
+  color: black;
+}
+</style>
