@@ -1,11 +1,16 @@
 <script setup lang="tsx">
-import Modal from './components/MyForm.vue'
+import DialogForm from './components/DialogForm.vue'
 import { ref, onMounted, onUnmounted, createApp } from "vue";
 import { shallowRef } from 'vue';
 import type { LngLat, YMap } from '@yandex/ymaps3-types';
 import {
     YandexMap,
     YandexMapControls,
+    YandexMapControl,
+    YandexMapControlButton,
+    YandexMapGeolocationControl,
+    YandexMapOpenMapsButton,
+    YandexMapScaleControl,
     YandexMapDefaultFeaturesLayer,
     YandexMapDefaultMarker,
     YandexMapDefaultSchemeLayer,
@@ -25,6 +30,7 @@ const markers: { coordinates: LngLat }[] = [
 
 
 const showModal = ref(false)
+
 function scrollTo(id:string) {
       const element = document.getElementById(id);
       if (element) {
@@ -100,9 +106,7 @@ const accordionItems = [
     <div class="container flex flex-row items-center justify-between">
       <img src="/images/logo.svg" alt="Логотип" class="h-12 mx-12 basis-1/4" />
       <nav class="basis-3/4">
-        <ul
-          class="flex flex-row mx-auto justify-between space-x-8 text-background"
-        >
+        <ul class="flex flex-row mx-auto justify-between space-x-8 text-background">
           <li><a href="#rules" @click.prevent="scrollTo('rules')" >Правила</a></li>
           <li><a href="#rewards" @click.prevent="scrollTo('rewards')">Призы</a></li>
           <li><a href="#map" @click.prevent="scrollTo('map')">Где и когда?</a></li>
@@ -113,11 +117,11 @@ const accordionItems = [
   </header>
 
   <div class="relative">
-    <img
+    <img 
       src="/images/Розыгрыш квадрика_для сайта_Главный баннер 1920 х 720 px.png"
     />
     <div
-      class="absolute top-1/4 left-1/12 text-accent-foreground"
+      class="container absolute top-1/8 left-1/12 text-accent-foreground"
       style="font-size: 5vw; line-height: 5vw; font-weight: bold"
     >
       В ОДНОМ ЧЕКЕ
@@ -125,33 +129,26 @@ const accordionItems = [
       ОТ МЕЧТЫ
     </div>
     <div
-      class="absolute top-7/12 left-1/12 text-accent-foreground"
-      style="font-size: large; line-height: normal"
+      class="absolute top-5/12 left-1/12 text-accent-foreground"
+      style="font-size: 2vw; line-height: 2vw"
     >
-      Выигрывайте квадроцикл и другие призы за покупки
+      Выигрывайте квадроцикл и другие призы 
       <br />
-      Huter, Ресанта, Вихрь на сумму от 3000₽
+      за покупки Huter, Ресанта, Вихрь от 3000₽
     </div>
     <div
-      class="absolute bottom-1/8 left-1/12 text-accent-foreground"
+      class="container absolute bottom-1/8 left-1/12 text-accent-foreground"
       style="font-size: large; line-height: normal"
     >
-      <button
-        style="border-radius: 10px; border-color: #1e3c72 !important"
-        class="bg-muted-foreground hover:bg-accent w-64 h-16"
-        @click="showModal = true"
-      >
-        Зарегистрировать чек
-      </button>
-      <Modal v-model="showModal"></Modal>
+      <DialogForm></DialogForm>
     </div>
   </div>
+
   <div id="rules">
     <h2 class="text-accent text-3xl font-bold text-center py-4">
       Как стать участником?
     </h2>
   </div>
-
   <div class="grid grid-cols-3 gap-12 mx-16" style="text-align: center">
     <div style="position: relative">
       <img
@@ -175,13 +172,6 @@ const accordionItems = [
         Регистрируйте
       </h5>
       <p class="text-muted-foreground">номера чеков или заказов</p>
-      <button
-        style="border-radius: 10px; border-color: #1e3c72 !important"
-        class="text-accent-foreground bg-muted-foreground hover:bg-accent w-45 h-16 my-4"
-        @click="showModal = true"
-      >
-        Зарегистрировать чек
-      </button>
     </div>
     <div style="position: relative">
       <img
@@ -299,12 +289,21 @@ const accordionItems = [
           center: [92.835854, 56.025819],
           zoom: 16,
         },
+        showScaleInCopyrights: true,
       }"
       width="600px"
-      height="500px"
-  >
+      height="500px">
     <yandex-map-default-scheme-layer/>
     <yandex-map-default-features-layer/>
+    <yandex-map-controls :settings="{ position: 'right' }">
+        <yandex-map-zoom-control/>
+    </yandex-map-controls>
+    <yandex-map-controls :settings="{ position: 'left' }">
+        <yandex-map-geolocation-control/>
+    </yandex-map-controls>
+    <yandex-map-controls :settings="{ position: 'bottom left', orientation: 'vertical' }">
+        <yandex-map-open-maps-button/>
+    </yandex-map-controls>
     <yandex-map-marker class="bg-background"
         v-for="marker, index in markers"
         marker-type="custom"
@@ -366,12 +365,12 @@ const accordionItems = [
     </yandex-map-marker>
   </yandex-map>
       </div>
-      <div class="flex-col justify-center py-15 px-20">
-        <span class=" text-xl">Розыгрыш пройдет в формате мероприятия, на котором вас ждут конкурсы, подарки, а также тест-драйв инструментов и техники</span>
-        <h2 class="text-2xl my-7">Где?</h2>
-        <span class=" text-xl py-5">На Ул. Северо-Енисейская, 40 на парковке возле фитнес-центра Гараж</span>
-        <h2 class="text-2xl my-7">Когда?</h2>
-        <span class=" text-xl py-5">Мероприятие пройдет 28 сентября. Начало программы в 11:00, розыгрыш в 12:00</span>
+      <div class="flex-col justify-center py-15 px-10">
+        <span class=" text-2xl">Розыгрыш пройдет в формате мероприятия, на котором вас ждут конкурсы, подарки, а также тест-драйв инструментов и техники</span>
+        <h2 class="text-4xl font-bold my-7">Где?</h2>
+        <span class=" text-2xl py-5">На Ул. Северо-Енисейская, 40 на парковке возле фитнес-центра Гараж</span>
+        <h2 class="text-4xl font-bold my-7">Когда?</h2>
+        <span class=" text-2xl py-5">Мероприятие пройдет 28 сентября. Начало программы в 11:00, розыгрыш в 12:00</span>
       </div>
     </div>
   </div>
@@ -413,8 +412,8 @@ const accordionItems = [
 }
 
 .popup {
-  width: 398px;
-  height: 301px;
+  width: 370px;
+  height: 275px;
   position: absolute;
   top: calc(100% + 10px);
   background: #fff;
