@@ -4,8 +4,8 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineNuxtConfig({
   compatibilityDate: "2025-05-15",
   devtools: { enabled: true },
-  imports: { autoImport: false },
-  modules: ["shadcn-nuxt"],
+  imports: { scan: false },
+  modules: ["shadcn-nuxt", 'vue-yandex-maps/nuxt'],
   css: ["~/assets/css/tailwind.css"],
   vite: {
     plugins: [tailwindcss()],
@@ -21,4 +21,7 @@ export default defineNuxtConfig({
      */
     componentDir: "./components/ui",
   },
+  yandexMaps: {
+    apikey: '32c2e226-c442-4559-96cc-4283631ffa07'
+  }
 });

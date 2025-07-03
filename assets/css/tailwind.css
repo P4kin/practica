@@ -18,11 +18,11 @@
   --muted-foreground: rgb(4, 50, 102);
   --accent: rgb(0, 72, 154);
   --accent-foreground: rgb(255, 255, 255);
-  /* --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.577 0.245 27.325); */
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.577 0.245 27.325);
+  --border: rgb(0, 72, 154);
+  --input: rgb(0, 72, 154);
+  --ring: rgb(0, 72, 154);
   --radius: 0.625rem;
 }
 
@@ -43,9 +43,9 @@
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.396 0.141 25.723);
   --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.269 0 0);
-  --input: oklch(0.269 0 0);
-  --ring: oklch(0.439 0 0);
+  --border: rgb(0, 72, 154);
+  --input: rgb(0, 72, 154);
+  --ring: rgb(0, 72, 154);
 }
 
 @theme inline {
