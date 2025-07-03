@@ -1,5 +1,9 @@
 # Nuxt Minimal Starter
 
+## Demo
+
+[online demo](https://practica-wheat.vercel.app/)
+
 Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 
 ## Setup
