@@ -22,6 +22,6 @@ export default defineNuxtConfig({
     componentDir: "./components/ui",
   },
   yandexMaps: {
-    apikey: '32c2e226-c442-4559-96cc-4283631ffa07'
+    apikey: process.env.YANDEX_MAPS_APIKEY
   }
 });
